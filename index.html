@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard PNTP Atricon 25/26 - Olímpia</title>
+  
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js (Substitui o Recharts) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .fade-in { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { 
+      from { opacity: 0; transform: translateY(5px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+    
+    /* Scrollbar customizada para as tabelas e painéis */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="bg-slate-100 overflow-hidden h-screen flex">
+
+  <!-- Sidebar Institucional -->
+  <aside id="sidebar" class="w-72 bg-[#003865] text-slate-200 flex flex-col shadow-2xl z-20 flex-shrink-0 transition-all duration-300 ease-in-out relative border-r border-[#002b4d]">
+    
+    <!-- Cabeçalho do Menu -->
+    <div id="sidebar-header" class="p-6 border-b border-[#1c4d7e] flex flex-col items-center justify-center">
+      <div id="sidebar-logo-container" class="bg-white rounded-2xl flex items-center justify-center shadow-md p-1.5 transition-all w-20 h-20 mb-4">
+        <img 
+          src="https://www.camaraolimpia.sp.gov.br/public/admin/globalarq/uploads/images/Bras%C3%A3o_de_Ol%C3%ADmpia%2C_SP.jpg" 
+          alt="Brasão Olímpia" 
+          class="max-w-full max-h-full object-contain rounded-xl"
+          onerror="this.onerror=null; this.src='https://placehold.co/100x100/ffffff/003865?text=Logo';"
+        />
+      </div>
+      <div id="sidebar-title" class="text-center w-full mt-2">
+        <h1 class="text-[13px] font-extrabold text-white uppercase tracking-wider leading-snug">
+          PAINEL PNTP ATRICON<br/>2025 - 2026
+        </h1>
+      </div>
+    </div>
+
+    <!-- Navegação -->
+    <nav class="flex-1 overflow-y-auto py-5 px-4 space-y-2" id="menu-nav">
+      <!-- Botões gerados via JS -->
+    </nav>
+
+    <!-- Rodapé do Menu Lateral -->
+    <div class="p-5 bg-[#003865] border-t border-[#1c4d7e]">
+      <div id="sidebar-footer-collapsed" class="hidden flex-col items-center justify-center" title="Setor de Monitoramento / DADI">
+        <span class="text-xs font-bold text-[#759ed6]">DADI</span>
+      </div>
+      <div id="sidebar-footer-expanded" class="text-left">
+        <p class="font-bold text-[12px] leading-tight mb-1 text-[#759ed6]">
+          Setor de Monitoramento e Avaliação de Indicadores
+        </p>
+        <p class="font-semibold text-[11px] leading-tight mb-1.5 text-[#b8d6ff]">
+          Divisão de Análise de Dados e Indicadores
+        </p>
+        <p class="text-[10px] text-[#5c81b3] mt-2">
+          Casa Civil | Município de Olímpia - SP
+        </p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Área Principal -->
+  <div class="flex-1 flex flex-col overflow-hidden h-full">
+    
+    <!-- Cabeçalho Superior -->
+    <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 flex-shrink-0 z-10 shadow-sm">
+      <div class="flex items-center gap-3">
+        <button id="sidebarToggle" class="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors" title="Recolher/Expandir menu">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <div class="h-5 w-px bg-slate-200"></div>
+        <div>
+          <h2 id="header-title" class="text-lg font-bold text-slate-800 flex items-center gap-2 leading-tight">
+            <!-- Dinâmico -->
+          </h2>
+          <p id="header-subtitle" class="text-xs text-slate-500 hidden sm:block">
+            <!-- Dinâmico -->
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden md:flex items-center gap-2 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full">
+          <i data-lucide="award" class="w-4 h-4 text-amber-600"></i>
+          <span class="text-xs font-bold text-amber-800">Selo Ouro 2026: 94,03%</span>
+        </div>
+        <div class="text-right hidden sm:block">
+          <p class="text-xs font-semibold text-slate-700">Estância Turística de Olímpia</p>
+          <p class="text-[11px] text-slate-400">Relatórios Analíticos 2025 e 2026</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Conteúdo das Abas -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-8 relative">
+      <div class="max-w-7xl mx-auto h-full relative pb-12">
+        
+        <!-- Aba 2026 -->
+        <div id="tab-ano2026" class="tab-content hidden fade-in space-y-8"></div>
+        
+        <!-- Aba Comparativo -->
+        <div id="tab-comparativo" class="tab-content hidden fade-in space-y-6"></div>
+        
+        <!-- Aba 2025 -->
+        <div id="tab-ano2025" class="tab-content hidden fade-in space-y-6"></div>
+        
+        <!-- Aba 2024 -->
+        <div id="tab-ano2024" class="tab-content hidden fade-in space-y-6"></div>
+        
+        <!-- Aba Histórico -->
+        <div id="tab-historico" class="tab-content hidden fade-in space-y-6">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-800">Histórico Geral (2022 - 2026)</h2>
+            <p class="text-slate-500">Série consolidada baseada no Relatório Analítico de 2026.</p>
+          </div>
+          <div id="historico-kpis" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6"></div>
+          
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-[400px]">
+            <h3 class="font-semibold text-slate-700 mb-4">Evolução do Índice de Transparência</h3>
+            <div class="relative w-full h-[300px]">
+              <canvas id="historicoChart"></canvas>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div class="overflow-x-auto" id="historico-table-container"></div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. BASE DE DADOS (MOCK ESTRUTURADO)
+    // ==========================================
+    const dataStore = {
+      RESULTADOS_ANUAIS: [
+        { ano: '2022', autoavaliacao: 75.09, validacao: null, notaFinal: 75.09, classificacao: 'Elevado' },
+        { ano: '2023', autoavaliacao: 44.20, validacao: null, notaFinal: 44.20, classificacao: 'Básico' },
+        { ano: '2024', autoavaliacao: 76.62, validacao: 70.27, notaFinal: 70.27, classificacao: 'Intermediário', portaisAvaliados: 1, portaisCertificados: 0 },
+        { ano: '2025', autoavaliacao: 92.42, validacao: 83.24, notaFinal: 83.24, classificacao: 'Prata', portaisAvaliados: 1, portaisCertificados: 1, evolucao: 12.97 },
+        { ano: '2026', autoavaliacao: 99.17, validacao: 95.45, revisao: 94.03, notaFinal: 94.03, classificacao: 'Ouro', percentualEssenciais: 100 }
+      ],
+      DIMENSOES_2024: [
+        { nome: 'Despesa', percentual: 100.00 }, { nome: 'Emendas Parlamentares', percentual: 90.00 }, { nome: 'Informações Institucionais', percentual: 83.33 },
+        { nome: 'Planejamento e Orçamento', percentual: 80.77 }, { nome: 'Obras', percentual: 75.00 }, { nome: 'Recursos Humanos', percentual: 74.07 },
+        { nome: 'Saúde', percentual: 70.00 }, { nome: 'Receita', percentual: 66.67 }, { nome: 'Acessibilidade', percentual: 66.67 },
+        { nome: 'LGPD e Governança', percentual: 66.67 }, { nome: 'Licitações', percentual: 60.71 }, { nome: 'Diárias', percentual: 55.56 },
+        { nome: 'Renúncia de Receitas', percentual: 37.50 }, { nome: 'Convênios e Termos', percentual: 33.33 }, { nome: 'Contratos', percentual: 26.32 },
+        { nome: 'SIC', percentual: 19.05 }, { nome: 'Educação', percentual: 0.00 },
+      ],
+      DIMENSOES_2025: [
+        { nome: 'Despesa', percentual: 100.00, variacaoInformada: null }, { nome: 'Informações Prioritárias', percentual: 100.00, variacaoInformada: null },
+        { nome: 'Ouvidoria', percentual: 100.00, variacaoInformada: null }, { nome: 'Obras', percentual: 100.00, variacaoInformada: null },
+        { nome: 'Acessibilidade', percentual: 100.00, variacaoInformada: null }, { nome: 'Diárias', percentual: 100.00, variacaoInformada: null },
+        { nome: 'Licitações', percentual: 96.43, variacaoInformada: null }, { nome: 'Emendas Parlamentares', percentual: 90.00, variacaoInformada: null },
+        { nome: 'Informações Institucionais', percentual: 83.33, variacaoInformada: null }, { nome: 'Recursos Humanos', percentual: 81.48, variacaoInformada: null },
+        { nome: 'Planejamento e Orçamento', percentual: 80.77, variacaoInformada: null }, { nome: 'Contratos', percentual: 73.68, variacaoInformada: '-37,50%', inconsistente: true },
+        { nome: 'Receita', percentual: 66.67, variacaoInformada: null }, { nome: 'Saúde', percentual: 57.14, variacaoInformada: '600%', inconsistente: true },
+        { nome: 'LGPD e Governança', percentual: 50.00, variacaoInformada: null }, { nome: 'SIC', percentual: 47.62, variacaoInformada: null },
+        { nome: 'Convênios e Termos', percentual: 33.33, variacaoInformada: null }, { nome: 'Renúncia de Receitas', percentual: 31.25, variacaoInformada: null },
+        { nome: 'Educação', percentual: 0.00, variacaoInformada: null },
+      ],
+      DIMENSOES_2026: [
+        { n: 1, nome: 'Informações prioritárias', percentual: 100 }, { n: 2, nome: 'Informações institucionais', percentual: 100 },
+        { n: 3, nome: 'Receita', percentual: 100 }, { n: 4, nome: 'Despesa', percentual: 100 }, { n: 5, nome: 'Convênios e transferências', percentual: 100 },
+        { n: 6, nome: 'Recursos humanos', percentual: 83 }, { n: 7, nome: 'Diárias', percentual: 100 }, { n: 8, nome: 'Licitações', percentual: 82 },
+        { n: 9, nome: 'Contratos', percentual: 100 }, { n: 10, nome: 'Obras', percentual: 79 }, { n: 11, nome: 'Planejamento e prestação de contas', percentual: 96 },
+        { n: 12, nome: 'Serviço de Informação ao Cidadão – SIC', percentual: 100 }, { n: 13, nome: 'Acessibilidade', percentual: 100 },
+        { n: 14, nome: 'Ouvidoria', percentual: 100 }, { n: 15, nome: 'LGPD e Governo Digital', percentual: 100 }, { n: 16, nome: 'Renúncia de receita', percentual: 69 },
+        { n: 17, nome: 'Emendas parlamentares', percentual: 87 }, { n: 18, nome: 'Saúde', percentual: 73 }, { n: 19, nome: 'Educação e Assistência Social', percentual: 100 },
+      ],
+      CRITERIOS_2026: [
+        { grupo: '1 — Informações prioritárias', codigo: 'N/I', desc: 'Existência de sítio oficial próprio.', rec: null },
+        { grupo: '1 — Informações prioritárias', codigo: 'N/I', desc: 'Portal da Transparência próprio ou compartilhado.', rec: null },
+        { grupo: '1 — Informações prioritárias', codigo: 'N/I', desc: 'Acesso visível ao Portal da Transparência na página inicial.', rec: null },
+        { grupo: '1 — Informações prioritárias', codigo: 'N/I', desc: 'Ferramenta de pesquisa de conteúdo.', rec: null },
+        { grupo: '6 — Recursos humanos', codigo: '6.1', desc: 'Relação nominal dos servidores, autoridades e membros...', rec: 'Completar dados funcionais e remuneratórios.' },
+        { grupo: '6 — Recursos humanos', codigo: '6.2', desc: 'Remuneração nominal de cada servidor...', rec: null },
+        { grupo: '6 — Recursos humanos', codigo: '6.4', desc: 'Relação de estagiários, com datas de contratação e término.', rec: 'Conferir a publicação das informações de estagiários.' },
+        { grupo: '6 — Recursos humanos', codigo: '6.5', desc: 'Relação de terceirizados, contendo nome completo, função e empresa.', rec: 'Conferir a publicação das informações de terceirizados e padronizar atualização.' },
+        { grupo: '8 — Licitações', codigo: '8.1', desc: 'Relação sequencial das licitações, com número, modalidade, objeto...', rec: 'Verificar a publicação integral dos processos e documentos das fases.' },
+        { grupo: '8 — Licitações', codigo: '8.2', desc: 'Inteiro teor dos editais.', rec: null },
+        { grupo: '8 — Licitações', codigo: '8.4', desc: 'Documentos principais dos processos de dispensa e inexigibilidade.', rec: 'Verificar dispensas, inexigibilidades, adesões a atas.' },
+        { grupo: '8 — Licitações', codigo: '8.6', desc: 'Plano de Contratações Anual.', rec: 'Verificar Plano de Contratações Anual.' },
+        { grupo: '8 — Licitações', codigo: '8.7', desc: 'Relação dos licitantes e contratados sancionados administrativamente.', rec: 'Verificar relação de empresas sancionadas.' },
+        { grupo: '10 — Obras', codigo: '10.1', desc: 'Informações das obras, com objeto, situação atual, datas, etc.', rec: 'Padronizar a publicação de cada obra; relacionar informações físicas e financeiras.' },
+        { grupo: '10 — Obras', codigo: '10.2', desc: 'Quantitativos e preços unitários e totais contratados.', rec: 'Apresentar quantitativos contratados e executados.' },
+        { grupo: '10 — Obras', codigo: '10.3', desc: 'Quantitativos executados e preços efetivamente pagos.', rec: 'Vincular medições e pagamentos à evolução física.' },
+        { grupo: '10 — Obras', codigo: '10.4', desc: 'Relação de obras paralisadas, com motivo, responsável e previsão.', rec: 'Atualizar a situação das obras paralisadas.' },
+        { grupo: '11 — Planejamento e prestação de contas', codigo: '11.1', desc: 'Prestação de Contas do exercício anterior (Balanço Geral).', rec: 'Conferir o Balanço Geral e anexos.' },
+        { grupo: '11 — Planejamento e prestação de contas', codigo: '11.7', desc: 'Plano Estratégico Institucional.', rec: 'Avaliar a publicação do Plano Estratégico Institucional.' },
+        { grupo: '16 — Renúncia de receita', codigo: '16.1', desc: 'Divulgação das desonerações tributárias e fundamentação legal.', rec: 'Levantar os benefícios fiscais concedidos; identificar a legislação.' },
+        { grupo: '16 — Renúncia de receita', codigo: '16.2', desc: 'Valores de renúncia fiscal prevista e realizada.', rec: 'Demonstrar valores previstos e realizados.' },
+        { grupo: '16 — Renúncia de receita', codigo: '16.3', desc: 'Identificação dos beneficiários das desonerações tributárias.', rec: 'Identificar beneficiários respeitando os limites legais.' },
+        { grupo: '16 — Renúncia de receita', codigo: '16.4', desc: 'Projetos de incentivo à cultura, incluindo esportes.', rec: 'Organizar as informações sobre incentivos à cultura e ao esporte.' },
+        { grupo: '17 — Emendas parlamentares', codigo: '17.1', desc: 'Emendas parlamentares federais recebidas.', rec: 'Criar base consolidada; separar por esfera de governo.' },
+        { grupo: '17 — Emendas parlamentares', codigo: '17.2', desc: 'Emendas estaduais e municipais.', rec: 'Identificar autoria, número, objeto e valores.' },
+        { grupo: '17 — Emendas parlamentares', codigo: '17.3', desc: 'Execução orçamentária e financeira.', rec: 'Demonstrar a execução orçamentária e financeira.' },
+        { grupo: '18 — Saúde', codigo: '18.3', desc: 'Lista de espera da regulação para consultas, exames e serviços.', rec: 'Publicar a lista de espera da regulação.' },
+        { grupo: '18 — Saúde', codigo: '18.4', desc: 'Relação dos medicamentos fornecidos e orientações.', rec: 'Disponibilizar a relação de medicamentos.' },
+        { grupo: '18 — Saúde', codigo: '18.5', desc: 'Estoques de medicamentos das farmácias públicas.', rec: 'Divulgar estoques; Sugestão: Criar BI para consulta.' },
+        { grupo: '18 — Saúde', codigo: '18.6', desc: 'Composição e funcionamento do Conselho de Saúde.', rec: 'Manter atualizados os instrumentos e o Conselho.' },
+      ],
+      DIVERGENCIAS_2026: [
+        { grupo: 'Obras', itens: ['10.1', '10.2', '10.3'], obs: 'Redução registrada no relatório.' },
+        { grupo: 'Planejamento e Prestação de Contas', itens: ['11.1'], obs: 'Divergência apontada.' },
+        { grupo: 'Saúde', itens: ['18.3', '18.4'], obs: 'Divergência apontada.' },
+        { grupo: 'Licitações', itens: ['N/I'], obs: 'Divergência de validação descrita no relatório, itens específicos não listados.' },
+        { grupo: 'Renúncia de Receita', itens: ['N/I'], obs: 'Alteração de resultado dos itens do grupo.' },
+        { grupo: 'Emendas Parlamentares', itens: ['Todos (3 requisitos)'], obs: 'Alteração de resultado nos três requisitos.' },
+      ],
+      PLANO_ACAO_2026: [
+        { prioridade: 'Prioridade 1 — Alta', areas: [
+          { area: 'Renúncia de Receita', acao: 'Levantamento e publicação dos benefícios fiscais, valores e beneficiários.', resp: 'Finanças e Tributação' },
+          { area: 'Saúde', acao: 'Publicação e atualização de regulação, medicamentos e estoques.', resp: 'Saúde' },
+          { area: 'Obras', acao: 'Padronização da divulgação da execução física e financeira.', resp: 'Obras, Engenharia e Finanças' },
+          { area: 'Licitações', acao: 'Revisão da publicação integral dos processos e documentos.', resp: 'Compras/Licitações' },
+          { area: 'Emendas', acao: 'Consolidação da origem, valores e execução.', resp: 'Planejamento, Finanças e secretarias' },
+        ]},
+        { prioridade: 'Prioridade 2 — Média', areas: [
+          { area: 'Recursos Humanos', acao: 'Revisar informações funcionais, remunerações, estagiários e terceirizados.', resp: 'N/I' },
+          { area: 'Planejamento e Prestação de Contas', acao: 'Revisar documentos, anexos e publicações.', resp: 'N/I' },
+          { area: 'Contratos', acao: 'Conferir fiscais, aditivos e ordem cronológica de pagamentos.', resp: 'N/I' },
+          { area: 'Educação e Assistência Social', acao: 'Preservar a atualização das listas, planos e informações dos conselhos.', resp: 'N/I' },
+        ]},
+        { prioridade: 'Prioridade 3 — Manutenção', areas: [
+          { area: 'Controles Internos', acao: 'Testes periódicos de acesso ao Portal da Transparência.', resp: 'N/I' },
+          { area: 'Manutenção TI', acao: 'Verificação de links quebrados e documentos indisponíveis.', resp: 'N/I' },
+          { area: 'Gestão de Conteúdo', acao: 'Padronização de nomenclaturas e organização dos arquivos.', resp: 'N/I' },
+          { area: 'Processos', acao: 'Calendário de atualização por secretaria e histórico de publicações.', resp: 'N/I' },
+          { area: 'Auditoria', acao: 'Conferência preventiva antes dos próximos ciclos.', resp: 'N/I' },
+        ]}
+      ],
+      COMPARATIVO: [
+        { dim2025: 'Recursos Humanos', grp2026: 'Recursos humanos', v25: 81.48, v26: 83, nota: '' },
+        { dim2025: 'Licitações', grp2026: 'Licitações', v25: 96.43, v26: 82, nota: '' },
+        { dim2025: 'Obras', grp2026: 'Obras', v25: 100.00, v26: 79, nota: '' },
+        { dim2025: 'Planejamento e Orçamento', grp2026: 'Planejamento e prestação de contas', v25: 80.77, v26: 96, nota: 'Aproximação de nomenclatura' },
+        { dim2025: 'Renúncia de Receitas', grp2026: 'Renúncia de receita', v25: 31.25, v26: 69, nota: '' },
+        { dim2025: 'Emendas Parlamentares', grp2026: 'Emendas parlamentares', v25: 90.00, v26: 87, nota: '' },
+        { dim2025: 'Saúde', grp2026: 'Saúde', v25: 57.14, v26: 73, nota: '' },
+        { dim2025: 'Contratos', grp2026: 'Contratos', v25: 73.68, v26: 100, nota: '' },
+        { dim2025: 'Receita', grp2026: 'Receita', v25: 66.67, v26: 100, nota: '' },
+        { dim2025: 'Despesa', grp2026: 'Despesa', v25: 100.00, v26: 100, nota: '' },
+        { dim2025: 'Diárias', grp2026: 'Diárias', v25: 100.00, v26: 100, nota: '' },
+        { dim2025: 'SIC', grp2026: 'Serviço de Informação ao Cidadão – SIC', v25: 47.62, v26: 100, nota: '' },
+        { dim2025: 'Acessibilidade', grp2026: 'Acessibilidade', v25: 100.00, v26: 100, nota: '' },
+        { dim2025: 'Ouvidoria', grp2026: 'Ouvidoria', v25: 100.00, v26: 100, nota: '' },
+        { dim2025: 'LGPD e Governança', grp2026: 'LGPD e Governo Digital', v25: 50.00, v26: 100, nota: 'Aproximação de nomenclatura' },
+        { dim2025: 'Informações Institucionais', grp2026: 'Informações institucionais', v25: 83.33, v26: 100, nota: '' },
+        { dim2025: 'Informações Prioritárias', grp2026: 'Informações prioritárias', v25: 100.00, v26: 100, nota: '' },
+        { dim2025: 'Convênios e Termos', grp2026: 'Convênios e transferências', v25: 33.33, v26: 100, nota: 'Aproximação de nomenclatura' },
+        { dim2025: 'Educação', grp2026: 'Educação e Assistência Social', v25: 0.00, v26: 100, nota: 'Agrupamento diferente.' },
+      ]
+    };
+
+    // ==========================================
+    // 2. FUNÇÕES AUXILIARES DE RENDERIZAÇÃO
+    // ==========================================
+    const menuItems = [
+      { id: 'ano2026', label: 'Ano 2026', sub: 'Detalhamento Ouro', icon: 'file-text', badge: '94,03%' },
+      { id: 'comparativo', label: 'Comparativo 25x26', sub: 'Avanços e Gargalos', icon: 'layers', badge: null },
+      { id: 'ano2025', label: 'Ano 2025', sub: 'Ciclo Prata', icon: 'calendar', badge: '83,24%' },
+      { id: 'ano2024', label: 'Ano 2024', sub: 'Ciclo Intermediário', icon: 'calendar', badge: '70,27%' },
+      { id: 'historico', label: 'Histórico Geral', sub: 'Série 2022–2026', icon: 'trending-up', badge: null },
+    ];
+
+    function renderCard(content, className = '') {
+      return `<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 ${className}">${content}</div>`;
+    }
+
+    function renderKPICard(title, value, sub, colorClass) {
+      return renderCard(`
+        <p class="text-sm font-medium text-slate-500 mb-1">${title}</p>
+        <h3 class="text-3xl font-bold text-slate-800">${value}</h3>
+        ${sub ? `<p class="text-xs text-slate-400 mt-2">${sub}</p>` : ''}
+      `, `border-t-4 ${colorClass}`);
+    }
+
+    function renderProgressBar(percent) {
+      let color = percent === 100 ? 'bg-green-500' : percent >= 80 ? 'bg-blue-500' : percent >= 60 ? 'bg-yellow-500' : 'bg-red-500';
+      return `
+        <div class="w-full bg-slate-100 rounded-full h-2 mt-2">
+          <div class="h-2 rounded-full ${color}" style="width: ${percent}%"></div>
+        </div>
+      `;
+    }
+
+    // ==========================================
+    // 3. RENDERIZAÇÃO DAS ABAS
+    // ==========================================
+    function renderTab2024() {
+      const dGerais = dataStore.RESULTADOS_ANUAIS.find(d => d.ano === '2024');
+      const dim = [...dataStore.DIMENSOES_2024].sort((a,b) => b.percentual - a.percentual);
+      
+      let html = `
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800">Resultados do Ciclo 2024</h2>
+          <p class="text-slate-500">Dados extraídos do Relatório Analítico Atricon 2025 referentes ao ano base 2024.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          ${renderKPICard('Índice de Transparência', dGerais.notaFinal + '%', '', 'border-t-slate-500')}
+          ${renderKPICard('Classificação', dGerais.classificacao, '', 'border-t-slate-500')}
+          ${renderKPICard('Portais Avaliados', dGerais.portaisAvaliados, '', 'border-t-slate-500')}
+          ${renderKPICard('Portais Certificados', dGerais.portaisCertificados, '', 'border-t-slate-500')}
+        </div>
+        ${renderCard(`
+          <h3 class="text-lg font-semibold text-slate-800 mb-4">Atendimento por Dimensão (2024)</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th class="p-3 font-semibold text-slate-600">Dimensão (Conforme Relatório 2025)</th>
+                  <th class="p-3 font-semibold text-slate-600 text-right">Atendimento</th>
+                  <th class="p-3 font-semibold text-slate-600 w-1/3">Representação</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${dim.map(d => `
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-medium text-slate-700">${d.nome}</td>
+                    <td class="p-3 text-right font-bold text-slate-800">${d.percentual.toFixed(2)}%</td>
+                    <td class="p-3">${renderProgressBar(d.percentual)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `)}
+      `;
+      document.getElementById('tab-ano2024').innerHTML = html;
+    }
+
+    function renderTab2025() {
+      const dGerais = dataStore.RESULTADOS_ANUAIS.find(d => d.ano === '2025');
+      const dim = [...dataStore.DIMENSOES_2025].sort((a,b) => b.percentual - a.percentual);
+      
+      let html = `
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800">Resultados do Ciclo 2025</h2>
+          <p class="text-slate-500">Dados do Relatório Analítico Atricon 2025.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          ${renderKPICard('Índice de Transparência', dGerais.notaFinal + '%', `Evolução: +${dGerais.evolucao} p.p.`, 'border-t-slate-400')}
+          ${renderKPICard('Classificação', dGerais.classificacao, '', 'border-t-slate-400')}
+          ${renderKPICard('Portais Avaliados', dGerais.portaisAvaliados, '', 'border-t-slate-400')}
+          ${renderKPICard('Portais Certificados', dGerais.portaisCertificados, '', 'border-t-slate-400')}
+        </div>
+        
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-md">
+          <div class="flex">
+            <div class="flex-shrink-0"><i data-lucide="alert-triangle" class="h-5 w-5 text-yellow-400"></i></div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-yellow-800">Atenção Metodológica - Relatório 2025</h3>
+              <div class="mt-2 text-sm text-yellow-700">
+                <p>O relatório oficial apresenta inconsistências nos cálculos de variação de algumas dimensões:</p>
+                <ul class="list-disc pl-5 mt-1 space-y-1">
+                  <li><strong>Contratos:</strong> Variação informada de -37,50%, embora o atendimento tenha subido (26,32% para 73,68%).</li>
+                  <li><strong>Saúde:</strong> Variação informada de 600%, embora o atendimento tenha caído (70,00% para 57,14%).</li>
+                </ul>
+                <p class="mt-1 font-bold">Os dados originais foram preservados nesta tabela conforme exigido.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        ${renderCard(`
+          <h3 class="text-lg font-semibold text-slate-800 mb-4">Atendimento por Dimensão (2025)</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th class="p-3 font-semibold text-slate-600">Dimensão</th>
+                  <th class="p-3 font-semibold text-slate-600 text-right">Atendimento 2025</th>
+                  <th class="p-3 font-semibold text-slate-600 text-right">Variação no Relatório</th>
+                  <th class="p-3 font-semibold text-slate-600 w-1/4">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${dim.map(d => `
+                  <tr class="hover:bg-slate-50 ${d.inconsistente ? 'bg-orange-50/50' : ''}">
+                    <td class="p-3 font-medium text-slate-700 flex items-center gap-2">
+                      ${d.nome}
+                      ${d.inconsistente ? `<i data-lucide="info" class="w-4 h-4 text-orange-500" title="Variação inconsistente"></i>` : ''}
+                    </td>
+                    <td class="p-3 text-right font-bold text-slate-800">${d.percentual.toFixed(2)}%</td>
+                    <td class="p-3 text-right text-slate-500 font-mono">${d.variacaoInformada || 'N/I'}</td>
+                    <td class="p-3">${renderProgressBar(d.percentual)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `)}
+      `;
+      document.getElementById('tab-ano2025').innerHTML = html;
+    }
+
+    function renderTab2026() {
+      const dados = dataStore.RESULTADOS_ANUAIS.find(d => d.ano === '2026');
+      const dim = dataStore.DIMENSOES_2026;
+      const div = dataStore.DIVERGENCIAS_2026;
+      const pla = dataStore.PLANO_ACAO_2026;
+
+      const diffAutoVal = (dados.autoavaliacao - dados.validacao).toFixed(2);
+      const diffValRev = (dados.validacao - dados.revisao).toFixed(2);
+      const diffAcumulada = (dados.autoavaliacao - dados.notaFinal).toFixed(2);
+
+      let html = `
+        <div class="border-b border-slate-200 pb-4">
+          <h2 class="text-3xl font-bold text-slate-800">Avaliação Ciclo 2026</h2>
+          <p class="text-slate-500 mt-1">Detalhamento completo do Relatório Analítico Atricon 2026.</p>
+        </div>
+
+        <section>
+          <h3 class="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
+            <i data-lucide="layers" class="text-blue-500"></i> A. Resultado Geral da Avaliação
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            ${renderCard(`<p class="text-sm text-slate-500 mb-1">Autoavaliação (Declaração)</p><h4 class="text-3xl font-bold text-slate-700">${dados.autoavaliacao}%</h4>`, 'bg-slate-50 border-slate-200 text-center')}
+            ${renderCard(`
+              <div class="absolute top-1/2 -left-3 transform -translate-y-1/2 text-slate-400 bg-white rounded-full"><i data-lucide="arrow-right"></i></div>
+              <p class="text-sm text-blue-600 mb-1">Validação Atricon</p>
+              <h4 class="text-3xl font-bold text-blue-800">${dados.validacao}%</h4>
+              <p class="text-xs text-red-500 mt-1">-${diffAutoVal} p.p.</p>
+            `, 'bg-blue-50 border-blue-200 text-center relative')}
+            ${renderCard(`
+              <div class="absolute top-1/2 -left-3 transform -translate-y-1/2 text-slate-400 bg-white rounded-full"><i data-lucide="arrow-right"></i></div>
+              <p class="text-sm text-emerald-600 mb-1">Nota Final (após Revisão)</p>
+              <h4 class="text-3xl font-bold text-emerald-800">${dados.notaFinal}%</h4>
+              <p class="text-xs text-red-500 mt-1">-${diffValRev} p.p.</p>
+            `, 'bg-emerald-50 border-emerald-200 text-center relative')}
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            ${renderKPICard('Classificação', dados.classificacao, '', 'border-t-yellow-400')}
+            ${renderKPICard('Critérios Essenciais', dados.percentualEssenciais + '%', '', 'border-t-emerald-500')}
+            ${renderKPICard('Redução Acumulada', `-${diffAcumulada} p.p.`, 'Entre Autoavaliação e Final', 'border-t-red-500')}
+            ${renderKPICard('Grupos 100%', dim.filter(d=>d.percentual===100).length, 'Conformidade plena', 'border-t-blue-500')}
+          </div>
+        </section>
+
+        <!-- Blobo B/C -->
+        <section>
+          <h3 class="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
+            <i data-lucide="file-text" class="text-blue-500"></i> B/C. Resultados por Grupos e Detalhamento de Critérios
+          </h3>
+          <p class="text-sm text-slate-500 mb-4">Clique em um grupo para visualizar os critérios e recomendações específicas do relatório 2026.</p>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            ${renderCard(`
+              <div class="overflow-y-auto h-full">
+                <table class="w-full text-left text-sm">
+                  <thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+                    <tr>
+                      <th class="p-3 font-semibold text-slate-600">Nº</th>
+                      <th class="p-3 font-semibold text-slate-600">Grupo Avaliado</th>
+                      <th class="p-3 font-semibold text-slate-600 text-right">%</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    ${dim.map(d => `
+                      <tr onclick="showGroupDetails('${d.nome.replace(/'/g, "\\'")}')" class="cursor-pointer hover:bg-blue-50 transition-colors group-row" data-group="${d.nome}">
+                        <td class="p-3 text-slate-500 font-mono text-xs">${d.n}</td>
+                        <td class="p-3 font-medium text-slate-700 flex items-center gap-2">
+                          ${d.nome} ${d.percentual < 90 ? '<span class="w-2 h-2 rounded-full bg-red-500"></span>' : ''}
+                        </td>
+                        <td class="p-3 text-right font-bold ${d.percentual === 100 ? 'text-green-600' : 'text-slate-800'}">${d.percentual}%</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            `, 'h-[600px] flex flex-col p-0 overflow-hidden')}
+
+            ${renderCard(`
+              <div id="details-container" class="h-full">
+                <div class="h-full flex items-center justify-center text-slate-400 text-center p-6">
+                  <div>
+                    <i data-lucide="search" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                    <p>Selecione um grupo na lista ao lado para visualizar os critérios, exigências e recomendações correspondentes descritas no relatório.</p>
+                  </div>
+                </div>
+              </div>
+            `, 'h-[600px] overflow-y-auto bg-slate-50/50')}
+          </div>
+        </section>
+
+        <!-- Divergências -->
+        <section>
+          <h3 class="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
+            <i data-lucide="alert-triangle" class="text-red-500"></i> D. Divergências Declaradas vs Validadas
+          </h3>
+          ${renderCard(`
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <p class="text-sm text-slate-600 mb-4">O relatório apontou uma redução de <strong>3,72 pontos percentuais</strong> na validação e <strong>1,42 p.p.</strong> na revisão. Abaixo estão as divergências identificadas:</p>
+                <ul class="space-y-2">
+                  ${div.map(di => `
+                    <li class="bg-slate-50 p-3 rounded border border-slate-100 flex flex-col">
+                      <span class="font-semibold text-slate-800 text-sm">${di.grupo}</span>
+                      <span class="text-xs text-red-600 font-medium">Itens afetados: ${di.itens.join(', ')}</span>
+                      <span class="text-xs text-slate-500 mt-1">${di.obs}</span>
+                    </li>
+                  `).join('')}
+                </ul>
+              </div>
+              <div class="bg-red-50 p-4 rounded-lg flex flex-col justify-center border border-red-100">
+                <h4 class="font-bold text-red-800 mb-2">Impacto Metodológico</h4>
+                <p class="text-sm text-red-700">A diferença entre a autoavaliação (99,17%) e a nota final (94,03%) evidencia falhas na interpretação dos critérios. O foco deve ser garantir que as evidências correspondam estritamente à matriz.</p>
+              </div>
+            </div>
+          `, 'border-l-4 border-l-red-500')}
+        </section>
+
+        <!-- Melhorias -->
+        <section>
+          <h3 class="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
+            <i data-lucide="check-square" class="text-emerald-500"></i> F. Plano de Melhorias 2026 (Recomendações)
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            ${pla.map((nivel, idx) => `
+              <div class="flex flex-col h-full bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-3 font-bold text-sm ${idx===0 ? 'bg-red-100 text-red-800' : idx===1 ? 'bg-orange-100 text-orange-800' : 'bg-slate-100 text-slate-700'}">
+                  ${nivel.prioridade}
+                </div>
+                <div class="p-0 flex-1">
+                  <ul class="divide-y divide-slate-100">
+                    ${nivel.areas.map(a => `
+                      <li class="p-4 text-sm">
+                        <div class="font-bold text-slate-800 mb-1">${a.area}</div>
+                        <div class="text-slate-600 mb-2">${a.acao}</div>
+                        <div class="text-xs font-mono text-slate-400 bg-slate-50 inline-block px-1.5 py-0.5 rounded">Resp: ${a.resp}</div>
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <section>
+          ${renderCard(`
+            <h4 class="font-bold text-emerald-800 mb-2 flex items-center gap-2">
+              <i data-lucide="check-circle" class="w-5 h-5"></i> E. Áreas de Manutenção Preventiva (Grupos 100%)
+            </h4>
+            <p class="text-sm text-emerald-700 mb-3">Segundo o relatório, os 10 grupos que atingiram 100% não estão dispensados de atualização. Recomenda-se preservar a regularidade e disponibilidade:</p>
+            <div class="flex flex-wrap gap-2">
+              ${dim.filter(d=>d.percentual===100).map(d => `<span class="bg-white border border-emerald-300 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-medium">${d.nome}</span>`).join('')}
+            </div>
+          `, 'bg-emerald-50 border-emerald-200')}
+        </section>
+      `;
+      document.getElementById('tab-ano2026').innerHTML = html;
+    }
+
+    function renderTabComparativo() {
+      const data = dataStore.COMPARATIVO;
+      const evolucoes = data.filter(d => d.v26 > d.v25).length;
+      const regressoes = data.filter(d => d.v26 < d.v25).length;
+      const mantidos = data.filter(d => d.v26 === d.v25).length;
+
+      let html = `
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800">Comparativo 2025 vs 2026</h2>
+          <p class="text-slate-500">Análise de mudanças, avanços e regressões entre os dois relatórios.</p>
+        </div>
+
+        <section>
+          <h3 class="text-lg font-semibold text-slate-700 mb-3">A. Comparação dos Resultados Gerais</h3>
+          ${renderCard(`
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th class="p-3 font-semibold text-slate-600">Indicador</th>
+                  <th class="p-3 font-semibold text-slate-600">Relatório 2025</th>
+                  <th class="p-3 font-semibold text-slate-600">Relatório 2026</th>
+                  <th class="p-3 font-semibold text-slate-600">Mudança</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr><td class="p-3 font-medium">Nota final</td><td class="p-3">83,24%</td><td class="p-3 font-bold text-blue-600">94,03%</td><td class="p-3 text-green-600 font-bold">+10,79 p.p.</td></tr>
+                <tr><td class="p-3 font-medium">Classificação</td><td class="p-3">Prata</td><td class="p-3 font-bold text-yellow-600">Ouro</td><td class="p-3">Avanço de Selo</td></tr>
+                <tr><td class="p-3 font-medium">Autoavaliação</td><td class="p-3">92,42%</td><td class="p-3">99,17%</td><td class="p-3">+6,75 p.p.</td></tr>
+              </tbody>
+            </table>
+          `, 'p-0 overflow-hidden')}
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-slate-700 mb-3">D. Comparação das Prioridades (Gargalos)</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${renderCard(`
+              <h4 class="font-bold text-red-800 mb-2">Foco em 2025 (Piores Resultados)</h4>
+              <ul class="text-sm space-y-1 text-slate-700 list-disc pl-5">
+                <li>Educação (0%)</li><li>Renúncia de Receitas (31,25%)</li><li>Convênios e Termos (33,33%)</li>
+                <li>SIC (47,62%)</li><li>LGPD e Governança (50%)</li><li>Saúde (57,14%)</li>
+              </ul>
+            `, 'border-t-4 border-t-red-400 bg-red-50/20')}
+            ${renderCard(`
+              <h4 class="font-bold text-orange-800 mb-2">Foco em 2026 (Novos Desafios)</h4>
+              <ul class="text-sm space-y-1 text-slate-700 list-disc pl-5">
+                <li>Renúncia de Receita (69%) - <em>Persistente, mas com avanço</em></li>
+                <li>Saúde (73%) - <em>Persistente, mas com avanço</em></li>
+                <li>Obras (79%) - <em>Regressão acentuada (era 100%)</em></li>
+                <li>Licitações (82%) - <em>Regressão (era 96,43%)</em></li>
+                <li>Recursos Humanos (83%)</li><li>Emendas Parlamentares (87%)</li>
+              </ul>
+            `, 'border-t-4 border-t-orange-400 bg-orange-50/20')}
+          </div>
+        </section>
+
+        <section>
+          <div class="flex justify-between items-end mb-3">
+            <h3 class="text-lg font-semibold text-slate-700">B/C. Comparação por Grupos e Dimensões</h3>
+            <div class="flex gap-3 text-sm">
+              <span class="flex items-center gap-1"><span class="w-3 h-3 bg-green-500 rounded-full"></span> Evolução (${evolucoes})</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 bg-red-500 rounded-full"></span> Regressão (${regressoes})</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 bg-slate-300 rounded-full"></span> Mantido/N/C (${mantidos})</span>
+            </div>
+          </div>
+          ${renderCard(`
+            <table class="w-full text-left text-sm whitespace-nowrap">
+              <thead class="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th class="p-3 font-semibold text-slate-600">Dimensão 2025</th>
+                  <th class="p-3 font-semibold text-slate-600">% 2025</th>
+                  <th class="p-3 font-semibold text-slate-600">Grupo 2026</th>
+                  <th class="p-3 font-semibold text-slate-600">% 2026</th>
+                  <th class="p-3 font-semibold text-slate-600 text-center">Dif. (p.p.)</th>
+                  <th class="p-3 font-semibold text-slate-600">Observação</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${data.map(row => {
+                  const diff = (row.v26 - row.v25).toFixed(2);
+                  const isEv = row.v26 > row.v25;
+                  const isRe = row.v26 < row.v25;
+                  return `
+                    <tr class="hover:bg-slate-50 ${isRe ? 'bg-red-50/30' : ''}">
+                      <td class="p-3 text-slate-600">${row.dim2025}</td>
+                      <td class="p-3 font-mono">${row.v25.toFixed(2)}%</td>
+                      <td class="p-3 text-slate-800 font-medium">${row.grp2026}</td>
+                      <td class="p-3 font-mono font-bold">${row.v26.toFixed(2)}%</td>
+                      <td class="p-3 text-center">
+                        ${isEv ? `<span class="text-green-600 font-bold">+${diff}</span>` : isRe ? `<span class="text-red-600 font-bold">${diff}</span>` : `<span class="text-slate-400">0.00</span>`}
+                      </td>
+                      <td class="p-3 text-xs text-slate-500 italic truncate max-w-[200px]" title="${row.nota}">${row.nota || '-'}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          `, 'p-0 overflow-x-auto')}
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-slate-700 mb-3">E. Mudanças Metodológicas e de Detalhamento</h3>
+          ${renderCard(`
+            <ul class="text-sm space-y-2 text-slate-700 list-disc pl-5">
+              <li>O relatório de 2025 apresenta resultados por dimensão e comparação direta com 2024.</li>
+              <li>O relatório de 2026 consolida o histórico de 2022 a 2026, distinguindo <strong>Autoavaliação</strong>, <strong>Validação</strong> e <strong>Revisão</strong>.</li>
+              <li>O relatório de 2026 reestrutura a avaliação em <strong>19 grupos temáticos</strong> (ex: "Educação" passa a "Educação e Assistência Social").</li>
+              <li>O nível de granularidade aumentou significativamente em 2026, com critérios específicos, divergências exatas e recomendações por área.</li>
+            </ul>
+          `, 'bg-slate-50 border-slate-200')}
+        </section>
+      `;
+      document.getElementById('tab-comparativo').innerHTML = html;
+    }
+
+    function renderTabHistorico() {
+      const hist = dataStore.RESULTADOS_ANUAIS;
+      const ppVar22_26 = (hist[4].notaFinal - hist[0].notaFinal).toFixed(2);
+      
+      const kpisHtml = `
+        ${renderKPICard('Evolução Total (22-26)', `+${ppVar22_26} p.p.`, '', 'border-t-green-500')}
+        ${renderKPICard('Maior Crescimento', '+32.42 p.p.', 'De 2023 para 2024', 'border-t-blue-500')}
+        ${renderKPICard('Maior Queda', '-30.89 p.p.', 'De 2022 para 2023', 'border-t-red-500')}
+        ${renderKPICard('Melhor Resultado', '94.03%', 'Ciclo 2026 (Selo Ouro)', 'border-t-yellow-400')}
+      `;
+      document.getElementById('historico-kpis').innerHTML = kpisHtml;
+
+      const tableHtml = `
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th class="p-3 font-semibold text-slate-600">Ciclo</th>
+              <th class="p-3 font-semibold text-slate-600 text-right">Autoavaliação</th>
+              <th class="p-3 font-semibold text-slate-600 text-right">Validação</th>
+              <th class="p-3 font-semibold text-slate-600 text-right">Nota Final</th>
+              <th class="p-3 font-semibold text-slate-600">Classificação</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            ${hist.map(row => `
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-bold text-slate-800">${row.ano}</td>
+                <td class="p-3 text-right text-slate-500">${row.autoavaliacao ? row.autoavaliacao + '%' : 'Não houve'}</td>
+                <td class="p-3 text-right text-slate-500">${row.validacao ? row.validacao + '%' : 'Não houve'}</td>
+                <td class="p-3 text-right font-bold text-blue-600">${row.notaFinal}%</td>
+                <td class="p-3 font-medium text-slate-700">${row.classificacao}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      document.getElementById('historico-table-container').innerHTML = tableHtml;
+    }
+
+    function initChart() {
+      const ctx = document.getElementById('historicoChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['2022', '2023', '2024', '2025', '2026'],
+          datasets: [
+            {
+              label: 'Autoavaliação',
+              data: [75.09, 44.20, 76.62, 92.42, 99.17],
+              borderColor: '#cbd5e1',
+              borderDash: [5, 5],
+              tension: 0.1
+            },
+            {
+              label: 'Validação',
+              data: [null, null, 70.27, 83.24, 95.45],
+              borderColor: '#f59e0b',
+              tension: 0.1
+            },
+            {
+              label: 'Nota Final',
+              data: [75.09, 44.20, 70.27, 83.24, 94.03],
+              borderColor: '#3b82f6',
+              borderWidth: 3,
+              pointRadius: 5,
+              pointBackgroundColor: '#3b82f6',
+              tension: 0.1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { min: 0, max: 100, grid: { borderDash: [3, 3] } },
+            x: { grid: { display: false } }
+          },
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+    }
+
+    // ==========================================
+    // 4. LÓGICA DE INTERAÇÃO (Vanilla JS)
+    // ==========================================
+    
+    // Função global para mostrar os critérios de um grupo
+    window.showGroupDetails = function(groupName) {
+      document.querySelectorAll('.group-row').forEach(r => r.classList.remove('bg-blue-100'));
+      document.querySelector(`.group-row[data-group="${groupName}"]`).classList.add('bg-blue-100');
+
+      const criterios = dataStore.CRITERIOS_2026.filter(c => c.grupo.includes(groupName));
+      const container = document.getElementById('details-container');
+      
+      let html = `
+        <div>
+          <h4 class="text-lg font-bold text-slate-800 mb-2 border-b border-slate-200 pb-2">${groupName}</h4>
+          <div class="space-y-4 mt-4">
+      `;
+
+      if (criterios.length > 0) {
+        criterios.forEach(crit => {
+          html += `
+            <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
+              <div class="flex gap-2 mb-1">
+                <span class="text-xs font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">Ref: ${crit.codigo}</span>
+              </div>
+              <p class="text-sm text-slate-700 font-medium">${crit.desc}</p>
+              ${crit.rec ? `
+                <div class="mt-2 bg-blue-50 p-2 rounded text-xs text-blue-800 border border-blue-100 flex items-start gap-1.5">
+                  <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>Recomendação:</strong> ${crit.rec}</span>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        });
+      } else {
+        html += `
+          <div class="text-center py-10 text-slate-400">
+            <p>Nenhum critério detalhado especificamente no relatório para este grupo.</p>
+          </div>
+        `;
+      }
+      
+      html += `</div></div>`;
+      container.innerHTML = html;
+      lucide.createIcons(); // Recriar ícones injetados
+    };
+
+    function renderMenu() {
+      const nav = document.getElementById('menu-nav');
+      nav.innerHTML = menuItems.map(item => `
+        <button 
+          id="btn-${item.id}"
+          onclick="switchTab('${item.id}')"
+          class="menu-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-200 group relative text-white hover:bg-[#104b7d]"
+        >
+          <i data-lucide="${item.icon}" class="w-5 h-5 flex-shrink-0 transition-colors text-slate-300 group-hover:text-white"></i>
+          <div class="sidebar-text flex-1 text-left overflow-hidden">
+            <div class="font-bold truncate leading-tight">${item.label}</div>
+          </div>
+          ${item.badge ? `<span class="sidebar-badge text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#002b4d] text-slate-300 border border-slate-500/30">${item.badge}</span>` : ''}
+        </button>
+      `).join('');
+    }
+
+    window.switchTab = function(tabId) {
+      // Ocultar todas as abas
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      // Mostrar aba ativa
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+      // Resetar estilos dos botões
+      document.querySelectorAll('.menu-btn').forEach(el => {
+        el.className = "menu-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-200 group relative text-white hover:bg-[#104b7d]";
+        const icon = el.querySelector('.lucide') || el.querySelector('i');
+        if(icon) {
+          icon.classList.remove('text-white');
+          icon.classList.add('text-slate-300');
+        }
+        const badge = el.querySelector('.sidebar-badge');
+        if(badge) badge.className = "sidebar-badge text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#002b4d] text-slate-300 border border-slate-500/30";
+      });
+
+      // Aplicar estilo ativo no botão clicado
+      const activeBtn = document.getElementById('btn-' + tabId);
+      activeBtn.className = "menu-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-200 group relative bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold shadow-lg shadow-blue-950/50 border-l-4 border-amber-400";
+      const activeIcon = activeBtn.querySelector('.lucide') || activeBtn.querySelector('i');
+      if(activeIcon) {
+        activeIcon.classList.remove('text-slate-300');
+        activeIcon.classList.add('text-white');
+      }
+      const activeBadge = activeBtn.querySelector('.sidebar-badge');
+      if(activeBadge) activeBadge.className = "sidebar-badge text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/20 text-white font-bold";
+
+      // Re-ocultar textos se sidebar estiver colapsada
+      if(document.getElementById('sidebar').classList.contains('w-20')) {
+        activeBtn.querySelector('.sidebar-text').classList.add('hidden');
+        if(activeBadge) activeBadge.classList.add('hidden');
+      }
+
+      // Atualizar Header
+      const info = menuItems.find(m => m.id === tabId);
+      document.getElementById('header-title').innerText = info.label;
+      document.getElementById('header-subtitle').innerText = info.sub + ' • Programa Nacional de Transparência Pública';
+    };
+
+    // Toggle Sidebar
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar');
+      const isCollapsed = sidebar.classList.toggle('w-20');
+      sidebar.classList.toggle('w-72');
+
+      // Toggles para as classes do Menu Items
+      document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.classList.toggle('justify-center');
+        btn.classList.toggle('px-2');
+        btn.classList.toggle('px-4');
+      });
+
+      document.querySelectorAll('.sidebar-text').forEach(el => el.classList.toggle('hidden'));
+      document.querySelectorAll('.sidebar-badge').forEach(el => el.classList.toggle('hidden'));
+      
+      // Header da Sidebar
+      document.getElementById('sidebar-title').classList.toggle('hidden');
+      const logo = document.getElementById('sidebar-logo-container');
+      logo.classList.toggle('w-20'); logo.classList.toggle('h-20');
+      logo.classList.toggle('w-12'); logo.classList.toggle('h-12');
+      logo.classList.toggle('mb-4'); logo.classList.toggle('mb-0');
+      
+      // Rodapé
+      document.getElementById('sidebar-footer-expanded').classList.toggle('hidden');
+      document.getElementById('sidebar-footer-collapsed').classList.toggle('hidden');
+      document.getElementById('sidebar-footer-collapsed').classList.toggle('flex');
+    });
+
+    // Inicialização
+    document.addEventListener("DOMContentLoaded", () => {
+      renderMenu();
+      renderTab2026();
+      renderTabComparativo();
+      renderTab2025();
+      renderTab2024();
+      renderTabHistorico();
+      
+      lucide.createIcons();
+      initChart();
+      
+      // Abre a primeira aba por padrão
+      switchTab('ano2026');
+    });
+  </script>
+</body>
+</html>
